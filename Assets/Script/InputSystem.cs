@@ -16,7 +16,6 @@ namespace TickEventSystem
         {
             setInputManager();
             creatEventListener();
-            //inputManager.InputMap_Keyboard.a.canceled += keyValue => p(keyValue.canceled, "canceled");
         }
 
         void Start()
