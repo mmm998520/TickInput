@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace TickSystem
+namespace TickEventSystem
 {
-    public class InputEventSystem : MonoBehaviour
+    public class InputSystem : MonoBehaviour
     {
-        public static InputManager inputManager;
+        public static InputActions inputActions;
         public List<TickEvent> tickEvents = new List<TickEvent>();
 
         private void Awake()
@@ -26,18 +26,18 @@ namespace TickSystem
 
         void setInputManager()
         {
-            if (inputManager == null)
+            if (inputActions == null)
             {
-                inputManager = new InputManager();
+                inputActions = new InputManager();
             }
-            inputManager.Enable();
+            inputActions.Enable();
         }
 
         void creatEventListener()
         {
-            inputManager.InputMap_Keyboard.a.started += inputTickEvent;
-            inputManager.InputMap_Keyboard.a.performed += inputTickEvent;
-            inputManager.InputMap_Keyboard.a.canceled += inputTickEvent;
+            inputActions.InputMap_Keyboard.a.started += inputTickEvent;
+            inputActions.InputMap_Keyboard.a.performed += inputTickEvent;
+            inputActions.InputMap_Keyboard.a.canceled += inputTickEvent;
         }
 
         private void inputTickEvent(InputAction.CallbackContext obj)

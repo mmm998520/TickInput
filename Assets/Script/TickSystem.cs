@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TickSystem
+namespace TickEventSystem
 {
     public class TickEvent
     {

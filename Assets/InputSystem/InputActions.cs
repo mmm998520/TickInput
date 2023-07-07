@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Script/InputSystem/InputManager.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/InputSystem/InputActions.inputactions'
 
 using System;
 using System.Collections;
@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-public class @InputManager : IInputActionCollection, IDisposable
+public class @InputActions : IInputActionCollection, IDisposable
 {
     public InputActionAsset asset { get; }
-    public @InputManager()
+    public @InputActions()
     {
         asset = InputActionAsset.FromJson(@"{
-    ""name"": ""InputManager"",
+    ""name"": ""InputActions"",
     ""maps"": [
         {
             ""name"": ""InputMap_Keyboard"",
@@ -236,8 +236,8 @@ public class @InputManager : IInputActionCollection, IDisposable
     private readonly InputAction m_InputMap_Keyboard_twoAxis;
     public struct InputMap_KeyboardActions
     {
-        private @InputManager m_Wrapper;
-        public InputMap_KeyboardActions(@InputManager wrapper) { m_Wrapper = wrapper; }
+        private @InputActions m_Wrapper;
+        public InputMap_KeyboardActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @a => m_Wrapper.m_InputMap_Keyboard_a;
         public InputAction @twoAxis => m_Wrapper.m_InputMap_Keyboard_twoAxis;
         public InputActionMap Get() { return m_Wrapper.m_InputMap_Keyboard; }
