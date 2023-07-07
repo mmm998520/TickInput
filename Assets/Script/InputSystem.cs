@@ -28,7 +28,7 @@ namespace TickEventSystem
         {
             if (inputActions == null)
             {
-                inputActions = new InputManager();
+                inputActions = new InputActions();
             }
             inputActions.Enable();
         }
