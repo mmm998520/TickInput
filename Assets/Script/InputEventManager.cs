@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +14,10 @@ namespace TickEventSystem
         /// </summary>
         public InputActions inputActions;
         /// <summary>
+        /// 紀錄遊戲時間的計時器
+        /// </summary>
+        public TickTimer gameTickTimer;
+        /// <summary>
         /// 尚未處理的所有輸入事件
         /// </summary>
         public List<TickEvent> tickEvents = new List<TickEvent>();
@@ -28,23 +29,27 @@ namespace TickEventSystem
         private void Awake()
         {
             //開始遊戲時建立輸入器
-            setInputManager();
+            enableInputManager();
         }
 
         void Start()
         {
-            //紀錄遊戲開始時間為第0幀
-            TickEvent.setGameStartTime();
+            //遊戲開始時開始計時
+            if(gameTickTimer == null)
+            {
+                gameTickTimer = new TickTimer();
+            }
+            gameTickTimer.restartStopwatch();
             //開始遊戲時建立監聽器
             creatEventListener();
         }
 
         /// <summary>
-        /// 確保有需管理的InputActions，並將它開啟
+        /// 確保有InputActions，並將它啟開
         /// </summary>
-        void setInputManager()
+        void enableInputManager()
         {
-            if (inputActions == null)
+            if(inputActions == null)
             {
                 inputActions = new InputActions();
             }
@@ -68,7 +73,7 @@ namespace TickEventSystem
         private void inputTickEvent(InputAction.CallbackContext obj)
         {
             TickEvent tickEvent = tickEventPool.newObject();
-            tickEvent.setTickEvent(TickEvent.DataTimeToTick(), obj.phase.ToString());
+            tickEvent.setTickEvent(gameTickTimer.getRunTick(), obj.phase.ToString());
             tickEvents.Add(tickEvent);
             Debug.LogWarning(tickEvent.eventContent + ", " + tickEvent.eventTriggerTick);
         }
