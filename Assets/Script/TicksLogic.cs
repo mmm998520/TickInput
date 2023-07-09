@@ -20,31 +20,31 @@ namespace TickEventSystem
         /// </summary>
         public void doTick()
         {
-            Debug.Log("Tick : " + currentTick);
+            //Debug.Log("Tick : " + currentTick);
             InputStat.ButtonStat buttonStat = inputEventManager.inputStat.buttonA;
-            if (buttonStat.buttonPressed)
+            if (buttonStat.isButtonPressing)
             {
-                Debug.LogWarning(buttonStat.buttonPressed + "" + buttonStat.lastButtonDownTick);
+                //Debug.LogWarning(buttonStat.isButtonPressing + "" + buttonStat.lastButtonDownTick);
             }
             else
             {
-                Debug.LogWarning(buttonStat.buttonPressed + "" + buttonStat.lastButtonUpTick);
+                //Debug.LogWarning(buttonStat.isButtonPressing + "" + buttonStat.lastButtonUpTick);
             }
         }
 
         /// <summary>
-        /// 運算輸入發生前的所有邏輯幀，如有邏輯錯誤則回傳true告知
+        /// 運算輸入發生前的所有邏輯幀，如有邏輯錯誤則回傳false告知
         /// </summary>
         /// <param name="inputTick">將發生輸入的時間，此幀不可參與運算</param>
         public bool tryTicksBeforeTick(long inputTick)
         {
             //防止有後來才被讀取的輸入進入，可能會有輸入在unityevent處理時被擋下，須注意
-            bool haveError = false;
+            bool haveError = true;
             if (inputTick <= currentTick)
             {
                 Debug.LogError("時間邏輯錯誤，currentTick : " + currentTick + ", inputTick : " + inputTick);
                 inputTick = currentTick +1;
-                haveError = true;
+                haveError = false;
             }
             //執行已確定無輸入變更的邏輯幀
             for(long i = currentTick+1; i < inputTick; i++)

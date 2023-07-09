@@ -110,7 +110,7 @@ namespace TickEventSystem
         void inputTickEvent(InputAction.CallbackContext obj)
         {
             TickEvent tickEvent = tickEventPool.newObject();
-            tickEvent.setTickEvent(gameTickTimer.getRunTick(), obj.control.name + "_" + obj.phase.ToString());
+            tickEvent.setTickEvent(gameTickTimer.getRunTick(), obj.control.name, obj.phase.ToString());
             tickEvents.Enqueue(tickEvent);
         }
 
@@ -125,11 +125,11 @@ namespace TickEventSystem
                 //從事件紀錄中抽取資料
                 TickEvent tickEvent = tickEvents.Dequeue();
                 //嘗試執行邏輯幀，只會運算事件紀錄發生前的邏輯幀，當出現問題時回報
-                bool logicTickError = ticksLogic.tryTicksBeforeTick(tickEvent.eventTriggerTick);
+                bool isLogicTickError = !ticksLogic.tryTicksBeforeTick(tickEvent.eventTriggerTick);
                 //若邏輯幀沒問題則紀錄輸入
-                if (!logicTickError)
+                if (!isLogicTickError)
                 {
-                    inputStat.switchByInputContent(tickEvent.eventTriggerTick, tickEvent.eventContent);
+                    inputStat.switchByInputContent(tickEvent.eventTriggerTick, tickEvent.eventBelong, tickEvent.eventContent);
                 }
                 //將用畢的事件紀錄返回物件池
                 putTickEventBackToPool(tickEvent);
@@ -157,44 +157,58 @@ namespace TickEventSystem
         /// <summary>
         /// 紀錄按鈕狀態與時長
         /// </summary>
-        public class ButtonStat
+        public struct ButtonStat
         {
             /// <summary>
             /// 按鈕是否被按下
             /// </summary>
-            public bool buttonPressed = false;
+            public bool isButtonPressing;
             /// <summary>
             /// 上次按鈕被按下的tick，-1代表沒被按下過
             /// </summary>
-            public long lastButtonDownTick = -1;
+            public long lastButtonDownTick;
             /// <summary>
             /// 上次按鈕被放開的tick，-1代表沒被放開過
             /// </summary>
-            public long lastButtonUpTick = -1;
+            public long lastButtonUpTick;
+
+            /// <summary>
+            /// 建構子
+            /// </summary>
+            /// <param name="_isButtonPressing">按鈕是否被按下，初始值請填false</param>
+            /// <param name="_lastButtonDownTick">上次按鈕被按下的tick，-1代表沒被按下過，初始值請填-1</param>
+            /// <param name="_lastButtonUpTick">上次按鈕被放開的tick，-1代表沒被放開過，初始值請填-1</param>
+            public ButtonStat(bool _isButtonPressing, long _lastButtonDownTick, long _lastButtonUpTick)
+            {
+                isButtonPressing = _isButtonPressing;
+                lastButtonDownTick = _lastButtonDownTick;
+                lastButtonUpTick = _lastButtonUpTick;
+            }
         }
 
-        public ButtonStat buttonA = new ButtonStat();
+        /// <summary>
+        /// 建構初始的ButtonStat
+        /// </summary>
+        public ButtonStat buttonA = new ButtonStat(false,-1,-1);
 
         /// <summary>
         /// 根據輸入內容與時間設置輸入狀態
         /// </summary>
         /// <param name="InputContent"></param>
-        public void switchByInputContent(long eventTriggerTick, string eventContent)
+        public void switchByInputContent(long eventTriggerTick, string eventBelong, string eventContent)
         {
-            //將資訊切割為名字、狀態
-            string[] eventContentArray = eventContent.Split('_');
             //根據名字判定執行內容
-            switch (eventContentArray[0])
+            switch (eventBelong)
             {
                 case "a":
-                    if (eventContentArray[1] == "Started")
+                    if (eventContent == "Started")
                     {
-                        buttonA.buttonPressed = true;
+                        buttonA.isButtonPressing = true;
                         buttonA.lastButtonDownTick = eventTriggerTick;
                     }
-                    else if (eventContentArray[1] == "Canceled")
+                    else if (eventContent == "Canceled")
                     {
-                        buttonA.buttonPressed = false;
+                        buttonA.isButtonPressing = false;
                         buttonA.lastButtonUpTick = eventTriggerTick;
                     }
                     break;

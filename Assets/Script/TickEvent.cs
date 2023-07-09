@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.InputSystem;
 
 namespace TickEventSystem
 {
@@ -17,6 +18,10 @@ namespace TickEventSystem
         /// 事件發生在第幾個Tick
         /// </summary>
         public long eventTriggerTick;
+        /// <summary>
+        /// 事件所屬，是哪個物件觸發的事件
+        /// </summary>
+        public string eventBelong;
         /// <summary>
         /// 事件內容
         /// </summary>
@@ -43,10 +48,11 @@ namespace TickEventSystem
         /// 設定TickEvent數值
         /// </summary>
         /// <param name="_eventTriggerTick">事件發生在第幾個Tick</param>
-        /// <param name="_eventContent">事件內容</param>
-        public void setTickEvent(long _eventTriggerTick, string _eventContent)
+        /// <param name="_eventBelong">事件內容</param>
+        public void setTickEvent(long _eventTriggerTick, string _eventBelong, string _eventContent)
         {
             eventTriggerTick = _eventTriggerTick;
+            eventBelong = _eventBelong;
             eventContent = _eventContent;
         }
     }
