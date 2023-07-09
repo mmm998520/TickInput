@@ -21,14 +21,14 @@ namespace TickEventSystem
         public void doTick()
         {
             //Debug.Log("Tick : " + currentTick);
-            InputStat.ButtonStat buttonStat = inputEventManager.inputStat.buttonA;
-            if (buttonStat.isButtonPressing)
+            InputStat.ButtonStat A_button = inputEventManager.inputStat.A_Button;
+            if (A_button.isButtonPressing)
             {
-                //Debug.LogWarning(buttonStat.isButtonPressing + "" + buttonStat.lastButtonDownTick);
+                //Debug.LogWarning(A_button.isButtonPressing + "" + A_button.lastButtonDownTick);
             }
             else
             {
-                //Debug.LogWarning(buttonStat.isButtonPressing + "" + buttonStat.lastButtonUpTick);
+                //Debug.LogWarning(A_button.isButtonPressing + "" + A_button.lastButtonUpTick);
             }
         }
 

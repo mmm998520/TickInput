@@ -157,39 +157,26 @@ namespace TickEventSystem
         /// <summary>
         /// 紀錄按鈕狀態與時長
         /// </summary>
-        public struct ButtonStat
+        public class ButtonStat
         {
             /// <summary>
             /// 按鈕是否被按下
             /// </summary>
-            public bool isButtonPressing;
+            public bool isButtonPressing = false;
             /// <summary>
             /// 上次按鈕被按下的tick，-1代表沒被按下過
             /// </summary>
-            public long lastButtonDownTick;
+            public long lastButtonDownTick = -1;
             /// <summary>
             /// 上次按鈕被放開的tick，-1代表沒被放開過
             /// </summary>
-            public long lastButtonUpTick;
-
-            /// <summary>
-            /// 建構子
-            /// </summary>
-            /// <param name="_isButtonPressing">按鈕是否被按下，初始值請填false</param>
-            /// <param name="_lastButtonDownTick">上次按鈕被按下的tick，-1代表沒被按下過，初始值請填-1</param>
-            /// <param name="_lastButtonUpTick">上次按鈕被放開的tick，-1代表沒被放開過，初始值請填-1</param>
-            public ButtonStat(bool _isButtonPressing, long _lastButtonDownTick, long _lastButtonUpTick)
-            {
-                isButtonPressing = _isButtonPressing;
-                lastButtonDownTick = _lastButtonDownTick;
-                lastButtonUpTick = _lastButtonUpTick;
-            }
+            public long lastButtonUpTick = -1;
         }
 
         /// <summary>
         /// 建構初始的ButtonStat
         /// </summary>
-        public ButtonStat buttonA = new ButtonStat(false,-1,-1);
+        public ButtonStat A_Button = new ButtonStat();
 
         /// <summary>
         /// 根據輸入內容與時間設置輸入狀態
@@ -203,13 +190,13 @@ namespace TickEventSystem
                 case "a":
                     if (eventContent == "Started")
                     {
-                        buttonA.isButtonPressing = true;
-                        buttonA.lastButtonDownTick = eventTriggerTick;
+                        A_Button.isButtonPressing = true;
+                        A_Button.lastButtonDownTick = eventTriggerTick;
                     }
                     else if (eventContent == "Canceled")
                     {
-                        buttonA.isButtonPressing = false;
-                        buttonA.lastButtonUpTick = eventTriggerTick;
+                        A_Button.isButtonPressing = false;
+                        A_Button.lastButtonUpTick = eventTriggerTick;
                     }
                     break;
                 default:
