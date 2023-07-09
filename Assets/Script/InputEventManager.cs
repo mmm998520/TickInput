@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TickEventSystem
 {
@@ -35,13 +37,26 @@ namespace TickEventSystem
         void Start()
         {
             //遊戲開始時開始計時
-            if(gameTickTimer == null)
+            restartGameTickTimer();
+            //遊戲開始時建立監聽器
+            creatEventListener();
+        }
+
+        void Update()
+        {
+            
+        }
+
+        /// <summary>
+        /// 確保有計時器，並開始計時
+        /// </summary>
+        void restartGameTickTimer()
+        {
+            if (gameTickTimer == null)
             {
                 gameTickTimer = new TickTimer();
             }
             gameTickTimer.restartStopwatch();
-            //開始遊戲時建立監聽器
-            creatEventListener();
         }
 
         /// <summary>
@@ -76,11 +91,6 @@ namespace TickEventSystem
             tickEvent.setTickEvent(gameTickTimer.getRunTick(), obj.phase.ToString());
             tickEvents.Add(tickEvent);
             Debug.LogWarning(tickEvent.eventContent + ", " + tickEvent.eventTriggerTick);
-        }
-        int i = 0;
-        void Update()
-        {
-            print(tickEventPool.pool.Count);
         }
     }
 }
