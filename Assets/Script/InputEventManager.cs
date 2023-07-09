@@ -14,19 +14,27 @@ namespace TickEventSystem
         /// <summary>
         /// 須進行管理的InputActions
         /// </summary>
-        public InputActions inputActions;
+        [HideInInspector] public InputActions inputActions;
         /// <summary>
         /// 紀錄遊戲時間的計時器
         /// </summary>
-        public TickTimer gameTickTimer;
+        [HideInInspector] public TickTimer gameTickTimer;
         /// <summary>
         /// 尚未處理的所有輸入事件
         /// </summary>
-        public List<TickEvent> tickEvents = new List<TickEvent>();
+        public Queue<TickEvent> tickEvents = new Queue<TickEvent>();
         /// <summary>
         /// 輸入事件物件池
         /// </summary>
         public ObjPool<TickEvent> tickEventPool = new ObjPool<TickEvent>(30);
+        /// <summary>
+        /// 當前邏輯幀的輸入狀態
+        /// </summary>
+        public InputStat inputStat = new InputStat();
+        /// <summary>
+        /// 邏輯幀運算器
+        /// </summary>
+        [HideInInspector] public TicksLogic ticksLogic;
 
         private void Awake()
         {
@@ -40,11 +48,14 @@ namespace TickEventSystem
             restartGameTickTimer();
             //遊戲開始時建立監聽器
             creatEventListener();
+            //遊戲開始時邏輯幀運算器
+            setTicksLogic();
         }
 
         void Update()
         {
-            
+            //在每個Update的最前面運算所有邏輯幀
+            runTicksLogic();
         }
 
         /// <summary>
@@ -58,13 +69,25 @@ namespace TickEventSystem
             }
             gameTickTimer.restartStopwatch();
         }
+        
+        /// <summary>
+        /// 確保有邏輯運算器，並將運算器掛上本InputEventManager
+        /// </summary>
+        void setTicksLogic()
+        {
+            if(ticksLogic == null)
+            {
+                ticksLogic = new TicksLogic();
+            }
+            ticksLogic.inputEventManager = this;
+        }
 
         /// <summary>
         /// 確保有InputActions，並將它啟開
         /// </summary>
         void enableInputManager()
         {
-            if(inputActions == null)
+            if (inputActions == null)
             {
                 inputActions = new InputActions();
             }
@@ -77,7 +100,6 @@ namespace TickEventSystem
         void creatEventListener()
         {
             inputActions.InputMap_Keyboard.a.started += inputTickEvent;
-            inputActions.InputMap_Keyboard.a.performed += inputTickEvent;
             inputActions.InputMap_Keyboard.a.canceled += inputTickEvent;
         }
 
@@ -85,12 +107,101 @@ namespace TickEventSystem
         /// 監聽回傳函式
         /// </summary>
         /// <param name="obj">input的監聽事件資訊</param>
-        private void inputTickEvent(InputAction.CallbackContext obj)
+        void inputTickEvent(InputAction.CallbackContext obj)
         {
             TickEvent tickEvent = tickEventPool.newObject();
-            tickEvent.setTickEvent(gameTickTimer.getRunTick(), obj.phase.ToString());
-            tickEvents.Add(tickEvent);
-            Debug.LogWarning(tickEvent.eventContent + ", " + tickEvent.eventTriggerTick);
+            tickEvent.setTickEvent(gameTickTimer.getRunTick(), obj.control.name + "_" + obj.phase.ToString());
+            tickEvents.Enqueue(tickEvent);
+        }
+
+        /// <summary>
+        /// 呼叫執行邏輯幀
+        /// </summary>
+        void runTicksLogic()
+        {
+            //運行此update發生前的所有邏輯幀
+            for (int i = 0; i < tickEvents.Count; i++)
+            {
+                //從事件紀錄中抽取資料
+                TickEvent tickEvent = tickEvents.Dequeue();
+                //嘗試執行邏輯幀，只會運算事件紀錄發生前的邏輯幀，當出現問題時回報
+                bool logicTickError = ticksLogic.tryTicksBeforeTick(tickEvent.eventTriggerTick);
+                //若邏輯幀沒問題則紀錄輸入
+                if (!logicTickError)
+                {
+                    inputStat.switchByInputContent(tickEvent.eventTriggerTick, tickEvent.eventContent);
+                }
+                //將用畢的事件紀錄返回物件池
+                putTickEventBackToPool(tickEvent);
+            }
+            //嘗試執行update前的邏輯幀
+            ticksLogic.tryTicksBeforeTick(gameTickTimer.getRunTick());
+        }
+
+        /// <summary>
+        /// 將TickEvent放回物件池
+        /// </summary>
+        /// <param name="tickEvent"></param>
+        void putTickEventBackToPool(TickEvent tickEvent)
+        {
+            tickEvent.resetTickEvent();
+            tickEventPool.ReturnObject(tickEvent);
+        }
+    }
+
+    /// <summary>
+    /// 紀錄當前邏輯幀輸入狀態
+    /// </summary>
+    public class InputStat
+    {
+        /// <summary>
+        /// 紀錄按鈕狀態與時長
+        /// </summary>
+        public class ButtonStat
+        {
+            /// <summary>
+            /// 按鈕是否被按下
+            /// </summary>
+            public bool buttonPressed = false;
+            /// <summary>
+            /// 上次按鈕被按下的tick，-1代表沒被按下過
+            /// </summary>
+            public long lastButtonDownTick = -1;
+            /// <summary>
+            /// 上次按鈕被放開的tick，-1代表沒被放開過
+            /// </summary>
+            public long lastButtonUpTick = -1;
+        }
+
+        public ButtonStat buttonA = new ButtonStat();
+
+        /// <summary>
+        /// 根據輸入內容與時間設置輸入狀態
+        /// </summary>
+        /// <param name="InputContent"></param>
+        public void switchByInputContent(long eventTriggerTick, string eventContent)
+        {
+            //將資訊切割為名字、狀態
+            string[] eventContentArray = eventContent.Split('_');
+            //根據名字判定執行內容
+            switch (eventContentArray[0])
+            {
+                case "a":
+                    if (eventContentArray[1] == "Started")
+                    {
+                        buttonA.buttonPressed = true;
+                        buttonA.lastButtonDownTick = eventTriggerTick;
+                    }
+                    else if (eventContentArray[1] == "Canceled")
+                    {
+                        buttonA.buttonPressed = false;
+                        buttonA.lastButtonUpTick = eventTriggerTick;
+                    }
+                    break;
+                default:
+                    Debug.LogError("這裡不該有內容");
+                    break;
+            }
         }
     }
 }
