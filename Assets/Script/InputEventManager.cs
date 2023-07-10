@@ -22,19 +22,28 @@ namespace TickEventSystem
         /// <summary>
         /// 尚未處理的所有輸入事件
         /// </summary>
-        public Queue<TickEvent> tickEvents = new Queue<TickEvent>();
+        [HideInInspector] public Queue<TickEvent> tickEvents = new Queue<TickEvent>();
         /// <summary>
         /// 輸入事件物件池
         /// </summary>
-        public ObjPool<TickEvent> tickEventPool = new ObjPool<TickEvent>(30);
+        [HideInInspector] public ObjPool<TickEvent> tickEventPool = new ObjPool<TickEvent>(30);
         /// <summary>
         /// 當前邏輯幀的輸入狀態
         /// </summary>
-        public InputStat inputStat = new InputStat();
+        [HideInInspector] public InputStat inputStat = new InputStat();
         /// <summary>
         /// 邏輯幀運算器
         /// </summary>
         [HideInInspector] public TicksLogic ticksLogic;
+
+        [Header("是否強制執行update前的最後邏輯幀")]
+        [Tooltip(
+            "不建議 ture !!!\n\n" +
+            "當邏輯幀與Update時間重疊時，是否強迫等邏輯幀運算完畢才執行Update\n\n" +
+            "ture : 輸入判定與畫面較同步，但輸入較糊，部分輸入會被延遲判定，適合體驗、回合制遊戲\n\n" +
+            "false : 輸入判定會慢於畫面更新，但輸入較穩定，適合格鬥遊戲"
+            )]
+        public bool forceTickBeforeUpdate;
 
         private void Awake()
         {
@@ -56,6 +65,14 @@ namespace TickEventSystem
         {
             //在每個Update的最前面運算所有邏輯幀
             runTicksLogic();
+            if (Keyboard.current.aKey.wasPressedThisFrame)
+            {
+                Debug.Log("down");
+            }
+            if (Keyboard.current.aKey.wasReleasedThisFrame)
+            {
+                Debug.Log("up");
+            }
         }
 
         /// <summary>
@@ -134,8 +151,15 @@ namespace TickEventSystem
                 //將用畢的事件紀錄返回物件池
                 putTickEventBackToPool(tickEvent);
             }
-            //嘗試執行update前的邏輯幀
-            ticksLogic.tryTicksBeforeTick(gameTickTimer.getRunTick());
+            //強迫 or 嘗試，執行update前最後邏輯幀
+            if (forceTickBeforeUpdate)
+            {
+                ticksLogic.tryTicksBeforeTickForce(gameTickTimer.getRunTick());
+            }
+            else
+            {
+                ticksLogic.tryTicksBeforeTick(gameTickTimer.getRunTick());
+            }
         }
 
         /// <summary>

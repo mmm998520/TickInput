@@ -13,7 +13,7 @@ namespace TickEventSystem
         /// <para>定義每個Tick的間隔時間</para>
         /// <para>單位 : 毫秒   (1秒 = 1000毫秒)</para>
         /// </summary>
-        static int oneTickTime = 30;
+        static int oneTickTime = 10;
         /// <summary>
         /// 高精度計時器，可記錄到毫秒(1/1000秒)級別
         /// </summary>
