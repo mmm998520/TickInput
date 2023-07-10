@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace TickEventSystem
+namespace GameDevTools.TickEventSystem
 {
     public class TicksLogic
     {

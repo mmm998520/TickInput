@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Diagnostics;
+using GameDevTools.General;
 
-namespace TickEventSystem
+namespace GameDevTools.TickEventSystem
 {
     /// <summary>
     /// 計時器，並計算邏輯幀
@@ -13,7 +14,7 @@ namespace TickEventSystem
         /// <para>定義每個Tick的間隔時間</para>
         /// <para>單位 : 毫秒   (1秒 = 1000毫秒)</para>
         /// </summary>
-        static int oneTickTime = 10;
+        int oneTickTime; 
         /// <summary>
         /// 高精度計時器，可記錄到毫秒(1/1000秒)級別
         /// </summary>
@@ -26,6 +27,29 @@ namespace TickEventSystem
         public TickTimer()
         {
             EditorApplication.pauseStateChanged += unityEditorPauseState;
+
+            //建構避免oneTickTime太小陷入故障無限迴圈
+            if (oneTickTime < 1)
+            {
+                oneTickTime = 1;
+            }
+        }
+
+        /// <summary>
+        /// <para>建構子</para>
+        /// <para>建構時監聽UnityEditor暫停鍵是否被按下</para>
+        /// </summary>
+        /// <param name="_oneTickTime">定義每個Tick的間隔時間，單位 : 毫秒   (1秒 = 1000毫秒)</param>
+        public TickTimer(int _oneTickTime)
+        {
+            EditorApplication.pauseStateChanged += unityEditorPauseState;
+
+            //建構避免oneTickTime太小陷入故障無限迴圈
+            oneTickTime = _oneTickTime;
+            if (oneTickTime < 1)
+            {
+                oneTickTime = 1;
+            }
         }
 
         #region//計時器控制
@@ -88,7 +112,7 @@ namespace TickEventSystem
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public static long TimeToTick(long time)
+        public long TimeToTick(long time)
         {
             return time / oneTickTime;
         }
@@ -100,7 +124,7 @@ namespace TickEventSystem
         /// <param name="timeA">先發生的時間</param>
         /// <param name="timeB">後發生的時間</param>
         /// <returns></returns>
-        public static long IntervalTimeToTick(long timeA, long timeB)
+        public long IntervalTimeToTick(long timeA, long timeB)
         {
             long t = TimeToTick(timeB) - TimeToTick(timeA);
             return t;
@@ -113,7 +137,7 @@ namespace TickEventSystem
         /// <param name="timeA">時間A</param>
         /// <param name="timeB">時間B</param>
         /// <returns></returns>
-        public static long IntervalTimeToTickAbs(long timeA, long timeB)
+        public long IntervalTimeToTickAbs(long timeA, long timeB)
         {
             long t = TimeToTick(timeB) - TimeToTick(timeA);
             return Mathff.abs(t);

@@ -1,7 +1,4 @@
-﻿using System;
-using UnityEngine.InputSystem;
-
-namespace TickEventSystem
+﻿namespace GameDevTools.TickEventSystem
 {
     /// <summary>
     /// Tick事件

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Threading;
-using System.Threading.Tasks;
+using GameDevTools.General;
 
-namespace TickEventSystem
+namespace GameDevTools.TickEventSystem
 {
     /// <summary>
     /// 輸入資訊管理
@@ -36,6 +35,8 @@ namespace TickEventSystem
         /// </summary>
         [HideInInspector] public TicksLogic ticksLogic;
 
+        #region//inspector面板可控
+        #region//bool forceTickBeforeUpdate 是否強制執行update前的最後邏輯幀
         [Header("是否強制執行update前的最後邏輯幀")]
         [Tooltip(
             "不建議 ture !!!\n\n" +
@@ -44,6 +45,18 @@ namespace TickEventSystem
             "false : 輸入判定會慢於畫面更新，但輸入較穩定，適合格鬥遊戲"
             )]
         public bool forceTickBeforeUpdate;
+        #endregion
+        #region//int oneTickTime tick單位時長
+        [Header("tick單位時長")]
+        [Tooltip(
+            "定義每個Tick的間隔時間\n" +
+            "單位 : 毫秒   (1秒 = 1000毫秒)\n" +
+            "最小值為1"
+            )]
+        [Range(1,9999)]
+        public int oneTickTime = 10;
+        #endregion
+        #endregion
 
         private void Awake()
         {
@@ -82,7 +95,7 @@ namespace TickEventSystem
         {
             if (gameTickTimer == null)
             {
-                gameTickTimer = new TickTimer();
+                gameTickTimer = new TickTimer(oneTickTime);
             }
             gameTickTimer.restartStopwatch();
         }
