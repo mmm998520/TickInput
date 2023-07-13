@@ -150,6 +150,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5793da5bfa4d2734dbd82c548efa6214, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputEventManager: {fileID: 1744878164}
+  bufferTickMax: 5
 --- !u!4 &709511842
 Transform:
   m_ObjectHideFlags: 0
@@ -208,5 +210,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameTickTimer: {fileID: 0}
-  forceTickBeforeUpdate: 0
-  oneTickTime: 10
+  inputSelcetOption: {fileID: 11400000, guid: f2a7a261a3aaea7428d97a98a222aaa3, type: 2}
