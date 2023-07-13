@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace GameDevTools.TickEventSystem
 {
-    public class TicksLogic
+    public class TicksLogic : TickUpdateSubject
     {
         /// <summary>
         /// 當前運算中、以運算完畢的tick，-1代表尚未開始運算
@@ -18,25 +19,7 @@ namespace GameDevTools.TickEventSystem
         /// </summary>
         public void doTick()
         {
-            //Debug.Log("Tick : " + currentTick);
-            InputStat.ButtonStat A_button = inputEventManager.inputStat.A_Button;
-            if (A_button.isButtonPressing)
-            {
-                //Debug.LogWarning(A_button.isButtonPressing + "" + A_button.lastButtonDownTick);
-            }
-            else
-            {
-                //Debug.LogWarning(A_button.isButtonPressing + "" + A_button.lastButtonUpTick);
-            }
-
-            if(A_button.lastButtonDownTick == currentTick)
-            {
-                Debug.LogWarning("Down");
-            }
-            if (A_button.lastButtonUpTick == currentTick)
-            {
-                Debug.LogWarning("Up");
-            }
+            NotifyObservers();
         }
 
         /// <summary>
@@ -98,5 +81,42 @@ namespace GameDevTools.TickEventSystem
             }
             return haveError;
         }
+
+
+        #region//觀察者模式專用程式
+        /// <summary>
+        /// TickUpdateObserver觀察者清單
+        /// </summary>
+        List<TickUpdateObserver> observersList = new List<TickUpdateObserver>();
+
+        /// <summary>
+        /// 將TickUpdateObserver加入觀察者清單
+        /// </summary>
+        /// <param name="observer">TickUpdateObserver觀察者</param>
+        public void AddObserver(TickUpdateObserver observer)
+        {
+            observersList.Add(observer);
+        }
+
+        /// <summary>
+        /// 將TickUpdateObserver移除觀察者清單
+        /// </summary>
+        /// <param name="observer">TickUpdateObserver觀察者</param>
+        public void RemoveObserver(TickUpdateObserver observer)
+        {
+            observersList.Remove(observer);
+        }
+
+        /// <summary>
+        /// 通知所有TickUpdateObserver觀察者執行TickUpdate
+        /// </summary>
+        public void NotifyObservers()
+        {
+            for (int i = 0; i < observersList.Count; i++)
+            {
+                observersList[i].TickUpdate();
+            }
+        }
+        #endregion
     }
 }

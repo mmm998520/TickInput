@@ -29,7 +29,7 @@ namespace GameDevTools.TickEventSystem
         /// <summary>
         /// 當前邏輯幀的輸入狀態
         /// </summary>
-        [HideInInspector] public InputStat inputStat = new InputStat();
+        [HideInInspector] public InputState inputState = new InputState();
         /// <summary>
         /// 邏輯幀運算器
         /// </summary>
@@ -78,14 +78,6 @@ namespace GameDevTools.TickEventSystem
         {
             //在每個Update的最前面運算所有邏輯幀
             runTicksLogic();
-            if (Keyboard.current.aKey.wasPressedThisFrame)
-            {
-                Debug.Log("down");
-            }
-            if (Keyboard.current.aKey.wasReleasedThisFrame)
-            {
-                Debug.Log("up");
-            }
         }
 
         /// <summary>
@@ -159,7 +151,7 @@ namespace GameDevTools.TickEventSystem
                 //若邏輯幀沒問題則紀錄輸入
                 if (!isLogicTickError)
                 {
-                    inputStat.switchByInputContent(tickEvent.eventTriggerTick, tickEvent.eventBelong, tickEvent.eventContent);
+                    inputState.switchByInputContent(tickEvent.eventTriggerTick, tickEvent.eventBelong, tickEvent.eventContent);
                 }
                 //將用畢的事件紀錄返回物件池
                 putTickEventBackToPool(tickEvent);
@@ -189,12 +181,12 @@ namespace GameDevTools.TickEventSystem
     /// <summary>
     /// 紀錄當前邏輯幀輸入狀態
     /// </summary>
-    public class InputStat
+    public class InputState
     {
         /// <summary>
         /// 紀錄按鈕狀態與時長
         /// </summary>
-        public class ButtonStat
+        public class ButtonState
         {
             /// <summary>
             /// 按鈕是否被按下
@@ -208,12 +200,63 @@ namespace GameDevTools.TickEventSystem
             /// 上次按鈕被放開的tick，-1代表沒被放開過
             /// </summary>
             public long lastButtonUpTick = -1;
+
+            /// <summary>
+            /// 定義按鈕的四種狀態，但會有後兩種，甚至一幀內按下放開按下的操作
+            /// </summary>
+            public enum ButtonStateEnum
+            {
+                None,//沒按
+                Down,//按下瞬間
+                Hold,//按著
+                Up,//放開瞬間
+                QuickClick,//一幀內按下、放開
+                QuickRelease//一幀內放開、按下
+            }
+
+            public ButtonStateEnum getButtonStateEnum(long currentTick)
+            {
+
+                if (lastButtonDownTick > lastButtonUpTick)
+                {
+                    if (currentTick == lastButtonDownTick)
+                    {
+                        return ButtonStateEnum.Down;
+                    }
+                    else
+                    {
+                        return ButtonStateEnum.Hold;
+                    }
+                }
+                else if (lastButtonDownTick == lastButtonUpTick)
+                {
+                    if (lastButtonDownTick < 0)
+                    {
+                        return ButtonStateEnum.None;
+                    }
+                    else
+                    {
+                        return ButtonStateEnum.QuickClick;
+                    }
+                }
+                else
+                {
+                    if (currentTick == lastButtonUpTick)
+                    {
+                        return ButtonStateEnum.Up;
+                    }
+                    else
+                    {
+                        return ButtonStateEnum.None;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// 建構初始的ButtonStat
         /// </summary>
-        public ButtonStat A_Button = new ButtonStat();
+        public ButtonState A_Button = new ButtonState();
 
         /// <summary>
         /// 根據輸入內容與時間設置輸入狀態
