@@ -102,7 +102,7 @@ namespace GameDevTools.TickEventSystem
         /// <returns></returns>
         public long getRunTick()
         {
-            return TimeToTick(stopwatch.ElapsedMilliseconds);
+            return timeToTick(stopwatch.ElapsedMilliseconds);
         }
         #endregion
 
@@ -112,7 +112,7 @@ namespace GameDevTools.TickEventSystem
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public long TimeToTick(long time)
+        public long timeToTick(long time)
         {
             return time / oneTickTime;
         }
@@ -124,9 +124,9 @@ namespace GameDevTools.TickEventSystem
         /// <param name="timeA">先發生的時間</param>
         /// <param name="timeB">後發生的時間</param>
         /// <returns></returns>
-        public long IntervalTimeToTick(long timeA, long timeB)
+        public long intervalTimeToTick(long timeA, long timeB)
         {
-            long t = TimeToTick(timeB) - TimeToTick(timeA);
+            long t = timeToTick(timeB) - timeToTick(timeA);
             return t;
         }
 
@@ -137,9 +137,9 @@ namespace GameDevTools.TickEventSystem
         /// <param name="timeA">時間A</param>
         /// <param name="timeB">時間B</param>
         /// <returns></returns>
-        public long IntervalTimeToTickAbs(long timeA, long timeB)
+        public long intervalTimeToTickAbs(long timeA, long timeB)
         {
-            long t = TimeToTick(timeB) - TimeToTick(timeA);
+            long t = timeToTick(timeB) - timeToTick(timeA);
             return Mathff.abs(t);
         }
         #endregion
