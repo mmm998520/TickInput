@@ -1,0 +1,3 @@
+須給物件掛上
+1.	TickEventSystemDataSaver
+2.	InputEventManager
