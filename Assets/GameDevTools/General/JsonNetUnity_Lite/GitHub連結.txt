@@ -1,0 +1,2 @@
+Json.Net是反序列化工具但不支援unity，所以要用這個
+https://github.com/SaladLab/Json.Net.Unity3D/releases

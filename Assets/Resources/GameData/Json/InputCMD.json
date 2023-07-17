@@ -1,0 +1,189 @@
+{
+  "1001001": {
+    "CMD_ID": "1001001",
+    "Active_ID": 1001000,
+    "Order": 50,
+    "CMD": [
+      "6",
+      "3",
+      "2",
+      "P"
+    ],
+    "CMD_Short": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "CMD_Long": [
+      3,
+      3,
+      3,
+      3
+    ],
+    "CMD_Ban": {},
+    "CMD_Tags": [
+      "canFireBall"
+    ],
+    "CleanBuffer": true
+  },
+  "1001002": {
+    "CMD_ID": "1001002",
+    "Active_ID": 1001000,
+    "Order": 50,
+    "CMD": [
+      "6",
+      "3",
+      "P",
+      "2"
+    ],
+    "CMD_Short": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "CMD_Long": [
+      3,
+      2,
+      1,
+      3
+    ],
+    "CMD_Ban": {},
+    "CMD_Tags": [
+      "canFireBall"
+    ],
+    "CleanBuffer": true
+  },
+  "1001003": {
+    "CMD_ID": "1001003",
+    "Active_ID": 1001000,
+    "Order": 50,
+    "CMD": [
+      "6",
+      "2",
+      "P"
+    ],
+    "CMD_Short": [
+      0,
+      0,
+      0
+    ],
+    "CMD_Long": [
+      6,
+      3,
+      3
+    ],
+    "CMD_Ban": {},
+    "CMD_Tags": [
+      "canFireBall"
+    ],
+    "CleanBuffer": true
+  },
+  "1001004": {
+    "CMD_ID": "1001004",
+    "Active_ID": 1001000,
+    "Order": 50,
+    "CMD": [
+      "6",
+      "P",
+      "2"
+    ],
+    "CMD_Short": [
+      0,
+      0,
+      0
+    ],
+    "CMD_Long": [
+      5,
+      1,
+      3
+    ],
+    "CMD_Ban": {},
+    "CMD_Tags": [
+      "canFireBall"
+    ],
+    "CleanBuffer": true
+  },
+  "1002001": {
+    "CMD_ID": "1002001",
+    "Active_ID": 1002000,
+    "Order": 1,
+    "CMD": [
+      "P"
+    ],
+    "CMD_Short": [
+      0
+    ],
+    "CMD_Long": [
+      3
+    ],
+    "CMD_Ban": {},
+    "CMD_Tags": [
+      "canPunch"
+    ],
+    "CleanBuffer": false
+  },
+  "1003001": {
+    "CMD_ID": "1003001",
+    "Active_ID": 1003000,
+    "Order": 10,
+    "CMD": [
+      "P",
+      "_P"
+    ],
+    "CMD_Short": [
+      10,
+      0
+    ],
+    "CMD_Long": [
+      -1,
+      3
+    ],
+    "CMD_Ban": {
+      "0": [
+        "P"
+      ]
+    },
+    "CMD_Tags": [
+      "canPunch",
+      "canCharge"
+    ],
+    "CleanBuffer": true
+  },
+  "1004001": {
+    "CMD_ID": "1004001",
+    "Active_ID": 1004000,
+    "Order": 100,
+    "CMD": [
+      "6",
+      "P",
+      "_P"
+    ],
+    "CMD_Short": [
+      0,
+      10,
+      0
+    ],
+    "CMD_Long": [
+      3,
+      -1,
+      3
+    ],
+    "CMD_Ban": {
+      "0": [
+        "6"
+      ],
+      "1": [
+        "P",
+        "6"
+      ]
+    },
+    "CMD_Tags": [
+      "canPunch",
+      "canCharge",
+      "canMove"
+    ],
+    "CleanBuffer": true
+  }
+}
